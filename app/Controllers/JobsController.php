@@ -11,13 +11,10 @@ class JobsController {
             $job = new Job;
             $job->title = $postData['title'];
             $job->description = $postData['description'];
-            print_r(\Illuminate\Database\Connection::enableQueryLog() );
+            $job->visible = 1;
+            $job->months = 0;
 
-            try {
-                echo $job->save();
-            } catch (PDOException $Exception) {
-                echo 'error';//$Exception;
-            }
+            $job->save();
         }
 
         include '../views/addJob.php';
