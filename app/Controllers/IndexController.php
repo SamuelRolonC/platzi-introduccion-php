@@ -14,7 +14,8 @@ class IndexController extends BaseController
         $name = 'Samuel Rolón Cicciari';
         $limitMonths = 1000;
 
-        $jobs = Job::all();
+        $jobs = Job::where('visible',1)
+            ->get();
         $projects = Project::all();
 
         return $this->renderHTML('index.twig',[

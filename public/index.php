@@ -6,21 +6,26 @@ error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::create('..');
+$dotenv->load();
+
+session_start();
+
+use Zend\Diactoros\Response\RedirectResponse;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use App\Models\Job;
 use Aura\Router\RouterContainer;
 
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver'    => 'mysql',
-    'host'      => 'localhost',
-    'database'  => 'practicaphp',
-    'username'  => 'root',
-    'password'  => '',
-    'charset'   => 'utf8',
-    'collation' => 'utf8_unicode_ci',
-    'prefix'    => '',
+    'driver'    => getenv('DB_DRIVE'),
+    'host'      => getenv('DB_HOST'),
+    'database'  => getenv('DB_NAME'),
+    'username'  => getenv('DB_NAME'),
+    'password'  => getenv('DB_PASS'),
+    'charset'   => getenv('DB_CHARSET'),
+    'collation' => getenv('DB_COLLATION'),
+    'prefix'    => getenv('DB_PREFIX'),
 ]);
 
 // Make this Capsule instance available globally via static methods... (optional)
@@ -51,6 +56,34 @@ $map->post('saveJob', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction'
 ]);
+$map->get('addUser', '/users/add', [
+    'controller' => 'App\Controllers\UserController',
+    'action' => 'getAddUserAction',
+    'auth' => false
+]);
+$map->post('saveUser', '/users/add', [
+    'controller' => 'App\Controllers\UserController',
+    'action' => 'getAddUserAction',
+    'auth' => false
+]);
+$map->get('getLogin', '/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin',
+    'auth' => false
+]);
+$map->get('getLogout', '/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout'
+]);
+$map->post('auth', '/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin',
+    'auth' => false
+]);
+$map->get('admin', '/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex'
+]);
 
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
@@ -60,19 +93,28 @@ if (!$route) {
     $handlerData = $route->handler;
     $controllerName = $handlerData['controller'];
     $actionName = $handlerData['action'];
+    $needsAuth = $handlerData['auth'] ?? true;
 
     $controller = new $controllerName;
-    $response = $controller->$actionName($request);
 
+    $sessionUserId = $_SESSION['userId'] ?? null;
+    if ($needsAuth && !$sessionUserId){
+        $response = new RedirectResponse('/login');
+    } else {
+        $response = $controller->$actionName($request);
+    }
+
+    foreach($response->getHeaders() as $name => $values) {
+        foreach($values as $value) {
+            header(sprintf('%s: %s',$name,$value),false);
+        }
+    }
+    http_response_code($response->getStatusCode());
     echo $response->getBody();
 }
 
 function printElement($element)
 {
-    // if ($element->visible == false) {
-    //     return;
-    // }
-
     echo '<li class="work-position">';
     echo '<h5>' . $element->title . '</h5>';
     echo '<p>' . $element->description . '</p>';

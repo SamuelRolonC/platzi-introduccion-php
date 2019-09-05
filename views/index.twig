@@ -32,6 +32,9 @@
         <ul>
           {% for job in jobs %}
             <li class="work-position">
+                <div class="col-3">
+                    <img src="{{ job.image }}" alt="" width="180" height="180" />
+                </div>
               <h5>{{ job.title }}</h5>
               <p>{{ job.description }}</p>
             </li>
