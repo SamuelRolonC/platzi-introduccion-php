@@ -20,7 +20,6 @@ class JobsController extends BaseController {
                 $jobValidator->assert($postData);
 
                 $job = new Job;
-                $job->id = 'id';
                 $job->title = $postData['title'];
                 $job->description = $postData['description'];
                 $job->visible = 1;
