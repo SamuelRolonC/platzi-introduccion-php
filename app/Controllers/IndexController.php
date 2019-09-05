@@ -7,7 +7,7 @@ use App\Models\{
     Project
 };
 
-class IndexController 
+class IndexController extends BaseController
 {
     public function indexAction()
     {
@@ -17,6 +17,9 @@ class IndexController
         $jobs = Job::all();
         $projects = Project::all();
 
-        include '../views/index.php';
+        return $this->renderHTML('index.twig',[
+            'name' => $name,
+            'jobs' => $jobs,
+        ]);
     }
 }
