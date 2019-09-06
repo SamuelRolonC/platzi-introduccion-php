@@ -1,11 +1,19 @@
 {% extends "main.twig" %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <ul>
-        <li><a href="/users/add" >Add User</a></li>
-        <li><a href="/jobs/add" >Add Job</a></li>
-    </ul>
+    <div class="dashboard">
+        <ul>
+            <li><p>Jobs</p></li>
+            <li><a href="/jobs/add" >Add Job</a></li>
+            <li><a href="" >Update Job</a></li>
+            <li><a href="" >Delete Job</a></li>
+            <br>
+            <li><p>Proyects</p></li>
+            <li><a href="/jobs/add" >Add Proyect</a></li>
+            <li><a href="" >Update Proyect</a></li>
+            <li><a href="" >Delete Proyect</a></li>
+        </ul>
+    </div>
     <br><br>
     <a href="/logout" >Logout</a>
 {% endblock %}

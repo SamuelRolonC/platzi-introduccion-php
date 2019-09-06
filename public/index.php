@@ -6,8 +6,8 @@ error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
-//$dotenv = Dotenv\Dotenv::create('..');
-//$dotenv->load();
+$dotenv = Dotenv\Dotenv::create('..');
+$dotenv->load();
 
 session_start();
 
@@ -18,7 +18,7 @@ use Aura\Router\RouterContainer;
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver'    => 'pgsql',
+    'driver'    => getenv('DB_DRIVER'),
     'host'      => getenv('DB_HOST'),
     'database'  => getenv('DB_NAME'),
     'username'  => getenv('DB_USER'),
