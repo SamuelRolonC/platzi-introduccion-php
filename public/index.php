@@ -56,6 +56,10 @@ $map->post('saveJob', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction'
 ]);
+$map->get('listJobs', '/jobs', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getListJobAction'
+]);
 $map->get('addUser', '/users/add', [
     'controller' => 'App\Controllers\UserController',
     'action' => 'getAddUserAction',

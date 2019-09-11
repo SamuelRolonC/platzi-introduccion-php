@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\User;
 use Respect\Validation\Validator;
+use Zend\Diactoros\Response\RedirectResponse;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 class UserController extends BaseController
 {
@@ -14,7 +16,11 @@ class UserController extends BaseController
             $postData = $request->getParsedBody();
 
             $jobValidator = Validator::key('username',Validator::stringType()->notEmpty())
-                ->key('password',Validator::stringType()->notEmpty());
+                ->key('password',Validator::stringType()->notEmpty())
+                ->key('name',Validator::stringType()->notEmpty())
+                ->key('lastname',Validator::stringType()->notEmpty())
+                ->key('email',Validator::stringType()->notEmpty())
+                ->key('phone',Validator::intVal());
             
             try {
                 $jobValidator->assert($postData);
@@ -22,12 +28,17 @@ class UserController extends BaseController
                 $user = new User;
                 $user->username = $postData['username'];
                 $user->password = $postData['password'];
+                $user->name = $postData['name'];
+                $user->lastname = $postData['lastname'];
+                $user->email = $postData['email'];
+                $user->phone = $postData['phone'];
+                $user->summary = '';
 
                 $user->save();
 
-                $responseMessage = 'Saved';
-            } catch (\Exception $e) {
-                $responseMessage = $e->getMessage();
+                return new RedirectResponse('/login');
+            } catch (NestedValidationException $e) {
+                $responseMessage = $e->getFullMessage();
             }
         }
 

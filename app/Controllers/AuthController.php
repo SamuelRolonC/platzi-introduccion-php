@@ -16,10 +16,10 @@ class AuthController extends BaseController
         $postData = $request->getParsedBody();
 
         $user = User::where('username',$postData['username'])->first();
-
+        
         if ($user) {
             if ($user->checkPassword($postData['password'])) {
-                $_SESSION['userId'] = $user->id;
+                $_SESSION['userId'] = $user->id_user;
                 return new RedirectResponse('/admin');
             } else {
                 $responseMessage = 'Unauthorized';
