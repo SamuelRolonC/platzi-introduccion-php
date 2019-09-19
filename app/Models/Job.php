@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
+use App\Traits\HasDefaultImage;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Job extends Model
 {
-    protected $table = 'jobs';
+    use HasDefaultImage;
+    use SoftDeletes;
 
-    public function __construct() {
+    protected $table = 'jobs';
+    protected $primaryKey = 'id_job';
+
+    public function __construct()
+    {
         $length = 5;
-        $directory = 'uploads';
+        $directory = 'uploads/';
         // default to this files directory if empty...
         $dir = !empty($directory) && is_dir($directory) ? $directory : dirname(__FILE__);
 
@@ -23,7 +30,7 @@ class Job extends Model
             }
         } while (file_exists($dir . '/' . $key));
 
-        $this->image = $key;
+        $this->image = $directory.$key;
     }
 
     public function getDurationAsString()

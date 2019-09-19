@@ -10,6 +10,8 @@
         "aura/router": "^3.1",
         "twig/twig": "^2.11",
         "respect/validation": "^1.1",
-        "vlucas/phpdotenv": "^3.5"
+        "vlucas/phpdotenv": "^3.5",
+        "php-di/php-di": "^6.0",
+        "woohoolabs/harmony": "^6.1"
     }
 }

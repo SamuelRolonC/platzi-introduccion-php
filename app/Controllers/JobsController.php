@@ -3,12 +3,23 @@
 namespace App\Controllers;
 
 use App\Models\Job;
-use App\Controllers\BaseController;
+use App\Services\JobService;
 use Respect\Validation\Validator;
+use Zend\Diactoros\Response\RedirectResponse;
+use Zend\Diactoros\ServerRequest;
 
-class JobsController extends BaseController {
+class JobsController extends BaseController
+{
+    private $jobService;
 
-    public function getAddJobAction($request) {
+    public function __construct(JobService $jobService)
+    {
+        parent::__construct();
+        $this->jobService = $jobService;
+    }
+
+    public function getAddJobAction(ServerRequest $request)
+    {
         $responseMessage = null;
 
         if ($request->getMethod() == 'POST') {
@@ -47,15 +58,20 @@ class JobsController extends BaseController {
         ]);
     }
 
-    public function getListJobAction($request) {
+    public function indexAction(ServerRequest $request) {
         if ($request->getMethod() == 'GET') {
-            $postData = $request->getParsedBody();
-
-            $jobs = Job::where('id_user',$_SESSION['userId'])->get();
+            $jobs = Job::where('id_user',$_SESSION['userId'])
+                ->whereNull('deleted_at')
+                ->get();
         }
 
-        return $this->renderHTML('listJobs.twig', [
-            'jobs' => $jobs,
-        ]);
+        return $this->renderHTML('jobs/index.twig', compact('jobs'));
+    }
+
+    public function deleteAction(ServerRequest $request) {
+        $params = $request->getQueryParams();
+        $this->jobService->delete($params['id']);
+
+        return new RedirectResponse('/jobs');
     }
 }

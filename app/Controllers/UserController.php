@@ -6,10 +6,11 @@ use App\Models\User;
 use Respect\Validation\Validator;
 use Zend\Diactoros\Response\RedirectResponse;
 use Respect\Validation\Exceptions\NestedValidationException;
+use Zend\Diactoros\ServerRequest;
 
 class UserController extends BaseController
 {
-    public function getAddUserAction($request) {
+    public function getAddUserAction(ServerRequest $request) {
         $responseMessage = null;
 
         if ($request->getMethod() == 'POST') {

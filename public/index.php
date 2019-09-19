@@ -11,10 +11,12 @@ $dotenv->load();
 
 session_start();
 
+use DI\Container;
 use Zend\Diactoros\Response\RedirectResponse;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Aura\Router\RouterContainer;
 
+$container = new Container();
 $capsule = new Capsule;
 
 $capsule->addConnection([
@@ -56,9 +58,13 @@ $map->post('saveJob', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction'
 ]);
-$map->get('listJobs', '/jobs', [
+$map->get('indexJobs', '/jobs', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getListJobAction'
+    'action' => 'indexAction'
+]);
+$map->get('deleteJobs', '/jobs/delete', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'deleteAction'
 ]);
 $map->get('addUser', '/users/add', [
     'controller' => 'App\Controllers\UserController',
@@ -99,12 +105,11 @@ if (!$route) {
     $actionName = $handlerData['action'];
     $needsAuth = $handlerData['auth'] ?? true;
 
-    $controller = new $controllerName;
-
     $sessionUserId = $_SESSION['userId'] ?? null;
     if ($needsAuth && !$sessionUserId){
         $response = new RedirectResponse('/login');
     } else {
+        $controller = $container->get($controllerName);
         $response = $controller->$actionName($request);
     }
 
@@ -115,19 +120,4 @@ if (!$route) {
     }
     http_response_code($response->getStatusCode());
     echo $response->getBody();
-}
-
-function printElement($element)
-{
-    echo '<li class="work-position">';
-    echo '<h5>' . $element->title . '</h5>';
-    echo '<p>' . $element->description . '</p>';
-    echo '<p>' . $element->getDurationAsString() . '</p>';
-    echo '<strong>Achievements:</strong>';
-    echo '<ul>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing el';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing el';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing el';
-    echo '</ul>';
-    echo '</li>';
 }

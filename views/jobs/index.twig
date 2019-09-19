@@ -6,14 +6,14 @@
     {{ responseMessage }}
   </div>
   <div class="table-responsive">  
-    <table class="table table-condensed" border="1" cellpadding="10">
+    <table class="table table-condensed">
       <tbody>
         <tr>
           <th><h4>Title</h4></th>
           <th><h4>Description</h4></th>
           <th><h4>Months</h4></th>
-          <th><h4>Visible<h4></th>
-          <th><h4>Image<h4></th>
+          <th><h4>Visible</h4></th>
+          <th><h4>Image</h4></th>
         </tr>
 
         {%  for job in jobs %}
@@ -22,9 +22,9 @@
             <td> {{ job.description }} </td>
             <td> {{ job.months }} </td>
             <td> {{ job.visible }} </td>
-            <td> <img src="{{ job.image }}" alt="" width="75" height="75" /> </td>
-            <td> <a href='jobs/{{job.id_jobs }}'>Edit</a> </td>
-            <td> <a href='jobs/{{job.id_jobs }}'>Delete</a> </td>
+            <td> <img src="{{ job.getImage(job.title) }}" alt="" width="75" height="75" /> </td>
+            <td> <a href='jobs/{{job.id_job }}'>Edit</a> </td>
+            <td> <a href='jobs/delete?id={{job.id_job }}'>Delete</a> </td>
           </tr>
         {% endfor %}
       </tbody>
