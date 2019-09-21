@@ -10,7 +10,7 @@ class JobService
 {
     public function delete($id)
     {
-        $job = Job::find($id);
+        $job = Job::findOrFail($id);
         $job->delete();
     }
 }

@@ -12,6 +12,11 @@
         "respect/validation": "^1.1",
         "vlucas/phpdotenv": "^3.5",
         "php-di/php-di": "^6.0",
-        "woohoolabs/harmony": "^6.1"
+        "woohoolabs/harmony": "^6.1",
+        "zendframework/zend-httphandlerrunner": "^1.1",
+        "middlewares/aura-router": "^1.1",
+        "monolog/monolog": "^2.0",
+        "franzl/whoops-middleware": "^1.1",
+        "robmorgan/phinx": "^0.11.1"
     }
 }

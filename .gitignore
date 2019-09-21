@@ -1,6 +1,7 @@
-/vendor
-.env
-/public/uploads/*
-!/public/uploads/.gitkeep
 .idea/
 .vagrant/
+/vendor
+/public/uploads/*
+/logs/*
+.env
+!*.gitkeep

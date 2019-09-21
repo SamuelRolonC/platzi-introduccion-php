@@ -1,24 +1,36 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_starup_errors', 1);
-error_reporting(E_ALL);
+if (getenv('DEBUG') === 'true') {
+    ini_set('display_errors', 1);
+    ini_set('display_starup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 require_once '../vendor/autoload.php';
+
+use App\Middlewares\AuthenticationMiddleware;
+use DI\Container;
+use Franzl\Middleware\Whoops\WhoopsMiddleware;
+use WoohooLabs\Harmony\Harmony;
+use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
+use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
+use Zend\Diactoros\Response;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+session_start();
 
 $dotenv = Dotenv\Dotenv::create('..');
 $dotenv->load();
 
-session_start();
-
-use DI\Container;
-use Zend\Diactoros\Response\RedirectResponse;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Aura\Router\RouterContainer;
+$log = new Logger('app');
+$log->pushHandler(new StreamHandler('../logs/app.log', Logger::WARNING));
 
 $container = new Container();
 $capsule = new Capsule;
-
 $capsule->addConnection([
     'driver'    => getenv('DB_DRIVER'),
     'host'      => getenv('DB_HOST'),
@@ -29,11 +41,7 @@ $capsule->addConnection([
     'collation' => getenv('DB_COLLATION'),
     'prefix'    => getenv('DB_PREFIX'),
 ]);
-
-// Make this Capsule instance available globally via static methods... (optional)
 $capsule->setAsGlobal();
-
-// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
 $capsule->bootEloquent();
 
 $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
@@ -47,52 +55,52 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 $routerContainer = new RouterContainer();
 $map = $routerContainer->getMap();
 $map->get('index', '/', [
-    'controller' => 'App\Controllers\IndexController',
-    'action' => 'indexAction'
+    'App\Controllers\IndexController',
+    'indexAction'
 ]);
 $map->get('addJob', '/jobs/add', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction'
+    'App\Controllers\JobsController',
+    'getAddJobAction'
 ]);
 $map->post('saveJob', '/jobs/add', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction'
+    'App\Controllers\JobsController',
+    'getAddJobAction'
 ]);
 $map->get('indexJobs', '/jobs', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'indexAction'
+    'App\Controllers\JobsController',
+    'indexAction'
 ]);
 $map->get('deleteJobs', '/jobs/delete', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'deleteAction'
+    'App\Controllers\JobsController',
+    'deleteAction'
 ]);
 $map->get('addUser', '/users/add', [
-    'controller' => 'App\Controllers\UserController',
-    'action' => 'getAddUserAction',
+    'App\Controllers\UserController',
+    'getAddUserAction',
     'auth' => false
 ]);
 $map->post('saveUser', '/users/add', [
-    'controller' => 'App\Controllers\UserController',
-    'action' => 'getAddUserAction',
+    'App\Controllers\UserController',
+    'getAddUserAction',
     'auth' => false
 ]);
 $map->get('getLogin', '/login', [
-    'controller' => 'App\Controllers\AuthController',
-    'action' => 'getLogin',
-    'auth' => false
+    'App\Controllers\AuthController',
+    'getLogin',
+    false
 ]);
 $map->get('getLogout', '/logout', [
-    'controller' => 'App\Controllers\AuthController',
-    'action' => 'getLogout'
+    'App\Controllers\AuthController',
+    'getLogout'
 ]);
 $map->post('auth', '/auth', [
-    'controller' => 'App\Controllers\AuthController',
-    'action' => 'postLogin',
+    'App\Controllers\AuthController',
+    'postLogin',
     'auth' => false
 ]);
 $map->get('admin', '/admin', [
-    'controller' => 'App\Controllers\AdminController',
-    'action' => 'getIndex'
+    'App\Controllers\AdminController',
+    'getIndex'
 ]);
 
 $matcher = $routerContainer->getMatcher();
@@ -100,24 +108,24 @@ $route = $matcher->match($request);
 if (!$route) {
     echo 'No route';
 } else {
-    $handlerData = $route->handler;
-    $controllerName = $handlerData['controller'];
-    $actionName = $handlerData['action'];
-    $needsAuth = $handlerData['auth'] ?? true;
-
-    $sessionUserId = $_SESSION['userId'] ?? null;
-    if ($needsAuth && !$sessionUserId){
-        $response = new RedirectResponse('/login');
-    } else {
-        $controller = $container->get($controllerName);
-        $response = $controller->$actionName($request);
+    try {
+        $harmony = new Harmony($request, new Response());
+        $harmony
+            ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter()))
+            ->addMiddleware(new AuthenticationMiddleware());
+            if (getenv('DEBUG') === 'true') {
+                $harmony->addMiddleware(new WhoopsMiddleware());
+            }
+        $harmony
+            ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
+            ->addMiddleware(new DispatcherMiddleware($container,'request-handler'))
+            ->run();
+    } catch (Exception $e) {
+        $log->warning($e->getMessage());
+        $emmiter = new SapiEmitter();
+        $emmiter->emit(new Response\EmptyResponse(400));
+    } catch (Error $e) {
+        $emmiter = new SapiEmitter();
+        $emmiter->emit(new Response\EmptyResponse(500));
     }
-
-    foreach($response->getHeaders() as $name => $values) {
-        foreach($values as $value) {
-            header(sprintf('%s: %s',$name,$value),false);
-        }
-    }
-    http_response_code($response->getStatusCode());
-    echo $response->getBody();
 }
