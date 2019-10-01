@@ -30,6 +30,7 @@ $log = new Logger('app');
 $log->pushHandler(new StreamHandler('../logs/app.log', Logger::WARNING));
 
 $container = new Container();
+
 $capsule = new Capsule;
 $capsule->addConnection([
     'driver'    => getenv('DB_DRIVER'),
@@ -101,6 +102,22 @@ $map->post('auth', '/auth', [
 $map->get('admin', '/admin', [
     'App\Controllers\AdminController',
     'getIndex'
+]);
+$map->get('contactForm', '/contact', [
+    'App\Controllers\ContactController',
+    'index'
+]);
+$map->post('contactSend', '/contact/send', [
+    'App\Controllers\ContactController',
+    'send'
+]);
+$map->get('changePasswordForm', '/password', [
+    'App\Controllers\ChangePasswordController',
+    'index'
+]);
+$map->post('changePassword', '/password/change', [
+    'App\Controllers\ChangePasswordController',
+    'change'
 ]);
 
 $matcher = $routerContainer->getMatcher();
