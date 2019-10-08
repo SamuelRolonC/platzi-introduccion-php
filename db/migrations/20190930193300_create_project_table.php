@@ -48,7 +48,10 @@ class CreateProjectTable extends AbstractMigration
             ->addColumn('image','string')
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
-            ->addColumn('deleted_at','datetime')
+            ->addColumn('deleted_at','datetime',[
+                'null' => true,
+                'default' => null
+            ])
             ->addForeignKey('id_user','users','id_user',[
                 'delete' => 'NO_ACTION',
                 'update' => 'NO_ACTION'

@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\EmptyResponse;
+use Zend\Diactoros\Response\RedirectResponse;
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
@@ -25,10 +26,22 @@ class AuthenticationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($request->getUri()->getPath() === '/admin') {
-            $sessionUserId = $_SESSION['userId'] ?? null;
+        $uri = $request->getUri()->getPath();
+
+        switch ($uri) {
+            case '/login':
+            case '/auth':
+            case '/users/add':
+                $protectedRoute = false;
+                break;
+            default:
+                $protectedRoute = true;
+        }
+
+        $sessionUserId = $_SESSION['userId'] ?? null;
+        if ($protectedRoute) {
             if (!$sessionUserId) {
-                return new EmptyResponse(401);
+                return new RedirectResponse('/login');
             }
         }
 

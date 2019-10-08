@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Respect\Validation\Validator;
 use Zend\Diactoros\Response\RedirectResponse;
 use Respect\Validation\Exceptions\NestedValidationException;
@@ -11,16 +12,16 @@ use Zend\Diactoros\ServerRequest;
 class UserController extends BaseController
 {
     public function getAddUserAction(ServerRequest $request) {
-        $responseMessage = null;
+        $responseMessage = '';
 
         if ($request->getMethod() == 'POST') {
             $postData = $request->getParsedBody();
 
-            $jobValidator = Validator::key('username',Validator::stringType()->notEmpty())
-                ->key('password',Validator::stringType()->notEmpty())
-                ->key('name',Validator::stringType()->notEmpty())
-                ->key('lastname',Validator::stringType()->notEmpty())
-                ->key('email',Validator::stringType()->notEmpty())
+            $jobValidator = Validator::key('username',Validator::notEmpty()->stringType()->length(3,20))
+                ->key('password',Validator::notEmpty()->stringType()->length(8,50))
+                ->key('name',Validator::notEmpty()->stringType()->length(2,20))
+                ->key('lastname',Validator::notEmpty()->stringType()->length(2,20))
+                ->key('email',Validator::notEmpty()->stringType()->email())
                 ->key('phone',Validator::intVal());
             
             try {
@@ -39,7 +40,16 @@ class UserController extends BaseController
 
                 return new RedirectResponse('/login');
             } catch (NestedValidationException $e) {
-                $responseMessage = $e->getFullMessage();
+                $responseMessage = $e->findMessages([
+                    'stringType' => 'El campo {{name}} debe contener valores alfanuméricos',
+                    'notEmpty' => 'El campo {{name}} no puede estar vació',
+                    'length' => 'Los campos Nombre y Apellido deben contener entre 2 y 20 caracteres. El campo username debe contener entre 3 y 20  carácteres. El campo contraseña debe contener entre 8 y 50 carácteres',
+                    'email' => 'Debes ingresar un email válido',
+                    'intVal' => 'El campo teléfono debe ser entero'
+                ]);
+                $responseMessage = implode(" - ",$responseMessage);
+            } catch (QueryException $e) {
+                $responseMessage = $e->getMessage();
             }
         }
 

@@ -40,7 +40,7 @@ class CreateJobTable extends AbstractMigration
                 'signed' => false,
                 'identity' => true
             ])
-            ->addColumn('id_user','integer',['signed' => false])
+            ->addColumn('id_user','integer',[ 'signed' => false ])
             ->addColumn('title','string')
             ->addColumn('description','text')
             ->addColumn('visible','boolean')
@@ -48,7 +48,10 @@ class CreateJobTable extends AbstractMigration
             ->addColumn('image','string')
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
-            ->addColumn('deleted_at','datetime',['default' => null])
+            ->addColumn('deleted_at','datetime',[
+                'null' => true,
+                'default' => null
+            ])
             ->addForeignKey('id_user','users','id_user',[
                 'delete' => 'NO_ACTION',
                 'update' => 'NO_ACTION'
