@@ -2,10 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\{
-    Job,
-    Project
-};
+use App\Models\{Job, Project, User};
 
 class IndexController extends BaseController
 {
@@ -18,12 +15,10 @@ class IndexController extends BaseController
             ->get();
         $projects = Project::all();
 
-//        $jobs = array_filter($jobs->toArray(),function (array $job) use ($limitMonths) {
-//            return $job['months'] <= $limitMonths;
-//        });
+        $user = User::find($_SESSION['userId']);
 
         return $this->renderHTML('index.twig',[
-            'name' => $name,
+            'user' => $user,
             'jobs' => $jobs,
             'projects' => $projects,
         ]);

@@ -1,0 +1,33 @@
+{% extends "main.twig" %}
+
+{% block content %}
+  <h1>Projects</h1>
+  <div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+  </div>
+  <div class="table-responsive">  
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th><h4>Title</h4></th>
+          <th><h4>Description</h4></th>
+          <th><h4>Months</h4></th>
+          <th><h4>Visible</h4></th>
+          <th><h4>Image</h4></th>
+        </tr>
+
+        {%  for project in projects %}
+          <tr> 
+            <td> {{ project.title }} </td>
+            <td> {{ project.description }} </td>
+            <td> {{ project.months }} </td>
+            <td> {{ project.visible }} </td>
+            <td> <img src="{{ project.getImage(project.title) }}" alt="" width="75" height="75" /> </td>
+            <td> <a href='projects/{{project.id_project }}'>Edit</a> </td>
+            <td> <a href='projects/delete?id={{project.id_project }}'>Delete</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

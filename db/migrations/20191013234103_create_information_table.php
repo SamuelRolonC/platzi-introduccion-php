@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateUserTable extends AbstractMigration
+class CreateInformationTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -31,26 +31,29 @@ class CreateUserTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('users',[
+        $table = $this->table('information',[
             'id' => false,
-            'primary_key' => 'id_user'
+            'primary_key' => 'id_information'
         ]);
         $table
-            ->addColumn('id_user','integer',[
+            ->addColumn('id_information','integer',[
                 'signed' => false,
                 'identity' => true
             ])
-            ->addColumn('username','string')
-            ->addColumn('password','string')
-            ->addColumn('name','string')
-            ->addColumn('lastname','string')
-            ->addColumn('email','string')
-            ->addColumn('phone','biginteger',['signed' => false])
-            ->addColumn('summary','text')
-            ->addColumn('image','string')
+            ->addColumn('id_user','integer',[ 'signed' => false ])
+            ->addColumn('label','string')
+            ->addColumn('value','text')
+            ->addColumn('type','string')
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
-            ->addIndex(['username','email'],['unique' => true])
+            ->addColumn('deleted_at','datetime',[
+                'null' => true,
+                'default' => null
+            ])
+            ->addForeignKey('id_user','users','id_user',[
+                'delete' => 'NO_ACTION',
+                'update' => 'NO_ACTION'
+            ])
             ->create();
     }
 }

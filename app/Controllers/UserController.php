@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Respect\Validation\Validator;
 use Zend\Diactoros\Response\RedirectResponse;
@@ -56,5 +58,37 @@ class UserController extends BaseController
         return $this->renderHTML('addUser.twig', [
             'responseMessage' => $responseMessage
         ]);
+    }
+
+    public function getSummary(ServerRequest $request)
+    {
+        $summary = '';
+
+        if ($request->getMethod() == 'GET') {
+            try {
+                $user = User::findOrFail($_SESSION['userId']);
+                $summary = $user->summary;
+            } catch (Exception $e) {
+                $summary = $e->getMessage();
+            }
+        }
+
+        return $this->renderHTML('users/summary.twig', [ 'summary' => $summary ]);
+    }
+
+    public function setSummary(ServerRequest $request)
+    {
+        $params = $request->getParsedBody();
+
+        try {
+            $user = User::findOrFail($_SESSION['userId']);
+            $user->summary = $params['summary'];
+
+            $responseMessage = $user->save();
+        } catch (Exception $e) {
+            $responseMessage = $e->getMessage();
+        }
+
+        return $this->renderHTML('users/summary.twig', [ 'responseMessage' => $responseMessage ]);
     }
 }

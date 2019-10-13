@@ -1,0 +1,13 @@
+{% extends 'main.twig' %}
+
+{% block content %}
+    <h1>Summary</h1>
+    <div class="alert alert-primary" role="alert">
+        {{ responseMessage }}
+    </div>
+    <form action="/summary" method="post" >
+        <label for="">Summary:</label><br>
+        <textarea type="text" rows="5" name="summary" >{{ summary }}</textarea><br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

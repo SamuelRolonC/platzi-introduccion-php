@@ -75,6 +75,30 @@ $map->get('deleteJobs', '/jobs/delete', [
     'App\Controllers\JobsController',
     'deleteAction'
 ]);
+$map->get('addProjectForm', '/projects/add', [
+    'App\Controllers\ProjectController',
+    'store'
+]);
+$map->post('addProjectAction', '/projects/add', [
+    'App\Controllers\ProjectController',
+    'store'
+]);
+$map->get('indexProjects', '/projects', [
+    'App\Controllers\ProjectController',
+    'index'
+]);
+$map->get('deleteProjects', '/projects/delete', [
+    'App\Controllers\ProjectController',
+    'delete'
+]);
+/*$map->get('updateProjectForm', '/projects/update', [
+    'App\Controllers\ProjectController',
+    'view'
+]);
+$map->put('updateProjectAction','/projects/update', [
+    'App\Controllers\ProjectController',
+    'update'
+]);*/
 $map->get('addUser', '/users/add', [
     'App\Controllers\UserController',
     'getAddUserAction',
@@ -84,6 +108,14 @@ $map->post('saveUser', '/users/add', [
     'App\Controllers\UserController',
     'getAddUserAction',
     'auth' => false
+]);
+$map->get('summaryForm', '/summary', [
+    'App\Controllers\UserController',
+    'getSummary'
+]);
+$map->post('summaryAction','/summary', [
+    'App\Controllers\UserController',
+    'setSummary'
 ]);
 $map->get('getLogin', '/login', [
     'App\Controllers\AuthController',
