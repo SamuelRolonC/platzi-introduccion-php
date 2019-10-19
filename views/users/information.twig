@@ -1,0 +1,21 @@
+{% extends 'main.twig' %}
+
+{% block content %}
+    <h1>User Information</h1>
+    <div class="alert alert-primary" role="alert">
+        {{ responseMessage }}
+    </div>
+    <form action="/users/information" method="post" >
+        <label for="">Username:</label>
+        <input type="text" name="username" value="{{ user.username }}"><br>
+        <label for="">Name:</label>
+        <input type="text" name="name" value="{{ user.name }}"><br>
+        <label for="">Lastname:</label>
+        <input type="text" name="lastname" value="{{ user.lastname }}"><br>
+        <label for="">Email:</label>
+        <input type="text" name="email" value="{{ user.email }}"><br>
+        <label for="">Phone:</label>
+        <input type="number" name="phone" value="{{ user.phone }}"><br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

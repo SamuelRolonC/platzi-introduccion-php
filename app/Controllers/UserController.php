@@ -91,4 +91,52 @@ class UserController extends BaseController
 
         return $this->renderHTML('users/summary.twig', [ 'responseMessage' => $responseMessage ]);
     }
+
+    public function setPhoto(ServerRequest $request)
+    {
+        if ($request->getMethod() == 'POST') {
+            $photoFile = $request->getUploadedFiles()['photo'];
+    
+            if ($photoFile->getError() == UPLOAD_ERR_OK && $_SESSION['userId']) {
+                try {
+                    $user = User::find($_SESSION['userId']);
+                    $user->checkImagePath();
+    
+                    $photoFile->moveTo($user->image);
+    
+                    $responseMessage = 'Saved';
+                } catch (\Exception $e) {
+                    $responseMessage = $e->getMessage();
+                }
+            }
+        }        
+
+        return $this->renderHTML('users/photo.twig', [ 'responseMessage' => $responseMessage ]);
+    }
+
+    public function getPhoto()
+    {
+        $user = User::find($_SESSION['userId']);
+
+        return $this->renderHTML('users/photo.twig', [ 'photo' => $user->image ]);
+    }
+
+    public function getUserInformation(ServerRequest $request)
+    {
+        $user = '';
+
+        if ($request->getMethod() == 'GET') {
+            $user = User::find($_SESSION['userId']);
+
+            $user = $user->only([
+                'username',
+                'name',
+                'lastname',
+                'email',
+                'phone'
+            ]);
+        }
+        
+        return $this->renderHTML('users/information.twig', [ 'user' => $user ]);
+    }
 }

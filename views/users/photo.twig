@@ -1,0 +1,12 @@
+{% extends 'main.twig' %}
+
+{% block content %}
+    <h1>Photo</h1>
+    <div class="alert alert-primary" role="alert">
+        {{ responseMessage }}
+    </div>
+    <form action="/photo" method="post" enctype="multipart/form-data">
+        <input type="file" name="photo"><br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

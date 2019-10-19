@@ -16,21 +16,7 @@ class Job extends Model
 
     public function __construct()
     {
-        $length = 5;
-        $directory = 'uploads/';
-        // default to this files directory if empty...
-        $dir = !empty($directory) && is_dir($directory) ? $directory : dirname(__FILE__);
-
-        do {
-            $key = '';
-            $keys = array_merge(range(0, 9), range('a', 'z'));
-
-            for ($i = 0; $i < $length; $i++) {
-                $key .= $keys[array_rand($keys)];
-            }
-        } while (file_exists($dir . '/' . $key));
-
-        $this->image = $directory.$key;
+        $this->image = $this->findAnImagePath();
     }
 
     public function getDurationAsString()

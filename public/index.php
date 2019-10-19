@@ -117,6 +117,14 @@ $map->post('summaryAction','/summary', [
     'App\Controllers\UserController',
     'setSummary'
 ]);
+$map->get('photoForm', '/photo', [
+    'App\Controllers\UserController',
+    'getPhoto'
+]);
+$map->post('photoAction','/photo', [
+    'App\Controllers\UserController',
+    'setPhoto'
+]);
 $map->get('getLogin', '/login', [
     'App\Controllers\AuthController',
     'getLogin',
@@ -151,6 +159,22 @@ $map->post('changePassword', '/password/change', [
     'App\Controllers\ChangePasswordController',
     'change'
 ]);
+$map->get('addInformationForm', '/information/add', [
+    'App\Controllers\InformationController',
+    'store'
+]);
+$map->post('addInformationAction', '/information/add', [
+    'App\Controllers\InformationController',
+    'store'
+]);
+$map->get('userInformationForm', '/users/information', [
+    'App\Controllers\UserController',
+    'getUserInformation'
+]);
+$map->post('userInformationAction', '/users/information', [
+    'App\Controllers\UserController',
+    'setUserInformation'
+]);
 
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
@@ -175,6 +199,6 @@ if (!$route) {
         $emmiter->emit(new Response\EmptyResponse(400));
     } catch (Error $e) {
         $emmiter = new SapiEmitter();
-        $emmiter->emit(new Response\EmptyResponse(500));
+        $emmiter->emit(new Response($e->getMessage(),500));
     }
 }
