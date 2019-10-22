@@ -1,0 +1,20 @@
+{% extends "main.twig" %}
+
+{% block content %}
+    <h1>Field</h1>
+    <div class="alert alert-primary" role="alert">
+      {{ responseMessage }}
+    </div>
+    <form action="/information/update?id={{ information.id_information }}" method="post" >
+        <label for="">Field label:</label>
+        <input type="text" name="label" value="{{ information.label }}"><br>
+        <label for="">Field data:</label>
+        <input type="text" name="value" value="{{ information.value }}"><br>
+        {% if information.link %}
+          <input type="checkbox" name="link" value="link" checked>Is a link<br>
+        {% else %}
+          <input type="checkbox" name="link" value="link">Is a link<br>
+        {% endif %}
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

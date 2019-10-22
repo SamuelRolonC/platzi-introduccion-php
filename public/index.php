@@ -59,22 +59,28 @@ $map->get('index', '/', [
     'App\Controllers\IndexController',
     'indexAction'
 ]);
-$map->get('addJob', '/jobs/add', [
+$map->get('addJobForm', '/jobs/add', [
     'App\Controllers\JobsController',
-    'getAddJobAction'
+    'store'
 ]);
-$map->post('saveJob', '/jobs/add', [
+$map->post('addJobAction', '/jobs/add', [
     'App\Controllers\JobsController',
-    'getAddJobAction'
+    'store'
 ]);
 $map->get('indexJobs', '/jobs', [
     'App\Controllers\JobsController',
-    'indexAction'
+    'index'
 ]);
-$map->get('deleteJobs', '/jobs/delete', [
+$map->get('editJobsForm', '/jobs/edit', [
     'App\Controllers\JobsController',
-    'deleteAction'
+    'edit'
 ]);
+$map->post('updateJobsAction', '/jobs/update', [
+    'App\Controllers\JobsController',
+    'update'
+]);
+
+// Project routes
 $map->get('addProjectForm', '/projects/add', [
     'App\Controllers\ProjectController',
     'store'
@@ -91,23 +97,33 @@ $map->get('deleteProjects', '/projects/delete', [
     'App\Controllers\ProjectController',
     'delete'
 ]);
-/*$map->get('updateProjectForm', '/projects/update', [
+$map->get('editProjectForm', '/projects/edit', [
     'App\Controllers\ProjectController',
-    'view'
+    'edit'
 ]);
-$map->put('updateProjectAction','/projects/update', [
+$map->post('updateProjectAction','/projects/update', [
     'App\Controllers\ProjectController',
     'update'
-]);*/
-$map->get('addUser', '/users/add', [
+]);
+
+// User routes
+$map->get('addUserForm', '/users/add', [
     'App\Controllers\UserController',
-    'getAddUserAction',
+    'store',
     'auth' => false
 ]);
-$map->post('saveUser', '/users/add', [
+$map->post('addUserAction', '/users/add', [
     'App\Controllers\UserController',
-    'getAddUserAction',
+    'store',
     'auth' => false
+]);
+$map->get('editUserForm', '/users/edit', [
+    'App\Controllers\UserController',
+    'edit'
+]);
+$map->post('updateUserAction', '/users/update', [
+    'App\Controllers\UserController',
+    'update'
 ]);
 $map->get('summaryForm', '/summary', [
     'App\Controllers\UserController',
@@ -139,6 +155,8 @@ $map->post('auth', '/auth', [
     'postLogin',
     'auth' => false
 ]);
+
+// Other routes
 $map->get('admin', '/admin', [
     'App\Controllers\AdminController',
     'getIndex'
@@ -159,6 +177,16 @@ $map->post('changePassword', '/password/change', [
     'App\Controllers\ChangePasswordController',
     'change'
 ]);
+
+// Information routes
+$map->get('indexInformation', '/information', [
+    'App\Controllers\InformationController',
+    'index'
+]);
+$map->get('deleteInformation', '/information/delete', [
+    'App\Controllers\InformationController',
+    'delete'
+]);
 $map->get('addInformationForm', '/information/add', [
     'App\Controllers\InformationController',
     'store'
@@ -167,13 +195,39 @@ $map->post('addInformationAction', '/information/add', [
     'App\Controllers\InformationController',
     'store'
 ]);
-$map->get('userInformationForm', '/users/information', [
-    'App\Controllers\UserController',
-    'getUserInformation'
+$map->get('editInformationForm', '/information/edit', [
+    'App\Controllers\InformationController',
+    'edit'
 ]);
-$map->post('userInformationAction', '/users/information', [
-    'App\Controllers\UserController',
-    'setUserInformation'
+$map->post('updateInformationAction', '/information/update', [
+    'App\Controllers\InformationController',
+    'update'
+]);
+
+// Skill routes
+$map->get('addSkillForm', '/skills/add', [
+    'App\Controllers\SkillController',
+    'store'
+]);
+$map->post('addSkillAction', '/skills/add', [
+    'App\Controllers\SkillController',
+    'store'
+]);
+$map->get('indexSkill', '/skills', [
+    'App\Controllers\SkillController',
+    'index'
+]);
+$map->get('deleteSkill', '/skills/delete', [
+    'App\Controllers\SkillController',
+    'delete'
+]);
+$map->get('editSkillsForm', '/skills/edit', [
+    'App\Controllers\SkillController',
+    'edit'
+]);
+$map->post('updateSkillsAction', '/skills/update', [
+    'App\Controllers\SkillController',
+    'update'
 ]);
 
 $matcher = $routerContainer->getMatcher();
@@ -197,8 +251,5 @@ if (!$route) {
         $log->warning($e->getMessage());
         $emmiter = new SapiEmitter();
         $emmiter->emit(new Response\EmptyResponse(400));
-    } catch (Error $e) {
-        $emmiter = new SapiEmitter();
-        $emmiter->emit(new Response($e->getMessage(),500));
     }
 }

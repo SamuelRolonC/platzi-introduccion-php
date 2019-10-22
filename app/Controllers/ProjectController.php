@@ -38,9 +38,7 @@ class ProjectController extends BaseController
     public function index(ServerRequest $request)
     {
         if ($request->getMethod() == 'GET') {
-            $projects = Project::where('id_user',$_SESSION['userId'])
-                ->whereNull('deleted_at')
-                ->get();
+            $projects = Project::where('id_user','=',$_SESSION['userId'])->get();
         }
 
         return $this->renderHTML('projects/index.twig', compact('projects'));
@@ -54,18 +52,30 @@ class ProjectController extends BaseController
         return new RedirectResponse('/projects');
     }
 
-    public function update(ServerRequest $request)
+    public function edit(ServerRequest $request)
     {
-        $responseMessage = null;
+        $responseMessage = '';
 
-        if ($request->getMethod() == 'PUT') {
-            $postData = $request->getParsedBody();
-            $postData['imageFile'] = $request->getUploadedFiles()['logo'];
-
-            $responseMessage = $this->projectService->create($postData);
+        if ($request->getMethod() == 'GET') {
+            $params = $request->getQueryParams();
+            $project = Project::find($params['id']);
         }
 
-        return $this->renderHTML('projects/store.twig', [
+        return $this->renderHTML('projects/edit.twig', compact('project'));
+    }
+
+    public function update(ServerRequest $request)
+    {
+        $responseMessage = '';
+
+        if ($request->getMethod() == 'POST') {
+            $postData = $request->getParsedBody();
+            $postData = array_merge($postData, $request->getUploadedFiles(),$request->getQueryParams());
+
+            $responseMessage = $this->projectService->storeAndUpdate($postData, true);
+        }
+
+        return $this->renderHTML('projects/edit.twig', [
             'responseMessage' => $responseMessage
         ]);
     }

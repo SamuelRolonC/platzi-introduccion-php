@@ -1,16 +1,24 @@
 {% extends "main.twig" %}
 
 {% block content %}
-    <h1>Edit Project</h1>
+    <h1>Add Skill</h1>
     <div class="alert alert-primary" role="alert">
       {{ responseMessage }}
     </div>
-    <form action="/projects/" method="put" enctype="multipart/form-data" >
+    <form action="/skills/add" method="post" >
         <label for="">Title:</label>
         <input type="text" name="title" ><br>
         <label for="">Description:</label>
         <input type="text" name="description"><br>
-        <input type="file" name="logo"><br>
+        <label for="">Level:</label>
+        <select name="level">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <br><br>
         <button type="submit">Save</button>
     </form>
 {% endblock %}

@@ -1,16 +1,16 @@
 {% extends "main.twig" %}
 
 {% block content %}
-    <h1>Add Project</h1>
+    <h1>Add field</h1>
     <div class="alert alert-primary" role="alert">
       {{ responseMessage }}
     </div>
     <form action="/information/add" method="post" >
-        <label for="">Nombre del campo:</label>
+        <label for="">Field label:</label>
         <input type="text" name="label" ><br>
-        <label for="">Datos:</label>
+        <label for="">Field data:</label>
         <input type="text" name="value"><br>
-        <input type="checkbox" name="type" value="link">Is a link<br>
+        <input type="checkbox" name="link" value="link">Is a link<br>
         <button type="submit">Save</button>
     </form>
 {% endblock %}

@@ -7,6 +7,7 @@ use App\Models\{
     Project, 
     User,
     Information,
+    Skill,
 };
 
 class IndexController extends BaseController
@@ -21,12 +22,14 @@ class IndexController extends BaseController
         $jobs = Job::where('id_user','=',$_SESSION['userId'])->get();
         $projects = Project::where('id_user','=',$_SESSION['userId'])->get();
         $information = Information::where('id_user','=',$_SESSION['userId'])->get();
+        $skills = Skill::where('id_user','=',$_SESSION['userId'])->get();
 
         return $this->renderHTML('index.twig',[
             'user' => $user,
             'information' => $information,
             'jobs' => $jobs,            
             'projects' => $projects,
+            'skills' => $skills,
         ]);
     }
 }

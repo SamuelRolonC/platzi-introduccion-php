@@ -42,10 +42,15 @@ class CreateMessageTable extends AbstractMigration
             ])
             ->addColumn('name','string')
             ->addColumn('email','string')
-            ->addColumn('message','text')
+            ->addColumn('body','text')
             ->addColumn('sent','boolean')
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
+            ->addColumn('id_user','integer',['signed' => false])
+            ->addForeignKey('id_user','users','id_user',[
+                'delete' => 'NO_ACTION',
+                'update' => 'NO_ACTION'
+            ])
             ->create();
     }
 }

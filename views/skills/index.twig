@@ -1,0 +1,29 @@
+{% extends "main.twig" %}
+
+{% block content %}
+  <h1>Skills</h1>
+  <div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+  </div>
+  <div class="table-responsive">  
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th><h4>Title</h4></th>
+          <th><h4>Description</h4></th>
+          <th><h4>Level</h4></th>
+        </tr>
+
+        {%  for skill in skills %}
+          <tr> 
+            <td> {{ skill.title }} </td>
+            <td> {{ skill.description }} </td>
+            <td> {{ skill.level }} </td>
+            <td> <a href='skills/edit?id={{skill.id_skill }}'>Edit</a> </td>
+            <td> <a href='skills/delete?id={{skill.id_skill }}'>Delete</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

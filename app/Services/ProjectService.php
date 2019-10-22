@@ -15,7 +15,7 @@ use Zend\Diactoros\Exception\UploadedFileErrorException;
 
 class ProjectService
 {
-    public function create(array $projectData)
+    public function storeAndUpdate(array $projectData, $isUpdate = false)
     {
         $projectValidator = Validator::key('title',Validator::stringType()->notEmpty())
             ->key('description',Validator::stringType()->notEmpty());
@@ -23,27 +23,32 @@ class ProjectService
         try {
             $projectValidator->assert($projectData);
 
-            $project = new Project;
-            if (isset($projectData['id'])) {
-                $project->id_project = $projectData['id'];
+            if ($isUpdate) {
+                $project = Project::find($projectData['id']);
+            } else {
+                $project = new Project;
+                $project->id_user = $_SESSION['userId'];
             }
+
             $project->title = $projectData['title'];
             $project->description = $projectData['description'];
-            $project->visible = 1;
-            $project->months = 0;
-            $project->id_user = $_SESSION['userId'];
 
-            $imageFile = $projectData['imageFile'];
+            if (isset($projectData['image'])) {
+                $imageFile = $projectData['image'];
 
-            if ($imageFile->getError() == UPLOAD_ERR_OK) {
-                $imageFile->moveTo($project->image);
+                if ($imageFile->getError() == UPLOAD_ERR_OK) {
+                    $imageFile->moveTo($project->image);
+                }
             }
 
             $project->save();
 
             $status = 'Successful';
-        } catch (Exception $e) {
-            $status = $e->getMessage();
+        } catch (NestedValidationException $e) {
+            return implode(" - ",$e->findMessages([
+                'stringType' => '{{name}} must be alfanumeric',
+                'notEmpty' => "{{name}} can't be empty"            
+            ]));
         }
 
         return $status;

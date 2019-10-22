@@ -1,0 +1,18 @@
+{% extends "main.twig" %}
+
+{% block content %}
+    <h1>Project</h1>
+    <div class="alert alert-primary" role="alert">
+      {{ responseMessage }}
+    </div>
+    <form action="/projects/update?id={{ project.id_project }}" method="post" enctype="multipart/form-data" >
+        <label for="">Title:</label>
+        <input type="text" name="title" value="{{ project.title }}"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description" value="{{ project.description  }}"><br>
+        <img src="/{{ project.getImage(project.title) }}" height="255" width="255"/>
+        <br>
+        <input type="file" name="image"><br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

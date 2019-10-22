@@ -45,7 +45,11 @@ class CreateUserTable extends AbstractMigration
             ->addColumn('name','string')
             ->addColumn('lastname','string')
             ->addColumn('email','string')
-            ->addColumn('phone','biginteger',['signed' => false])
+            ->addColumn('phone','biginteger',[
+                'signed' => false,
+                'null' => true,
+                'default' => null
+            ])
             ->addColumn('summary','text')
             ->addColumn('image','string',[
                 'null' => true,

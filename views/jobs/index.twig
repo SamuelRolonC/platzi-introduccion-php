@@ -10,20 +10,24 @@
       <tbody>
         <tr>
           <th><h4>Title</h4></th>
-          <th><h4>Description</h4></th>
-          <th><h4>Months</h4></th>
-          <th><h4>Visible</h4></th>
+          <th><h4>Company</h4></th>
+          <th><h4>Started</h4></th>
+          <th><h4>Finished</h4></th>
           <th><h4>Image</h4></th>
         </tr>
 
         {%  for job in jobs %}
           <tr> 
             <td> {{ job.title }} </td>
-            <td> {{ job.description }} </td>
-            <td> {{ job.months }} </td>
-            <td> {{ job.visible }} </td>
+            <td> {{ job.company }} </td>
+            <td> {{ job.started_at }} </td>
+            {% if job.working %}
+              <td>Present</td>
+            {% else %}
+              <td>{{ job.finished_at }}</td>
+            {% endif %}
             <td> <img src="{{ job.getImage(job.title) }}" alt="" width="75" height="75" /> </td>
-            <td> <a href='jobs/{{job.id_job }}'>Edit</a> </td>
+            <td> <a href='jobs/edit?id={{job.id_job }}'>Edit</a> </td>
             <td> <a href='jobs/delete?id={{job.id_job }}'>Delete</a> </td>
           </tr>
         {% endfor %}

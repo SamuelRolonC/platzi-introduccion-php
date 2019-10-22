@@ -5,9 +5,9 @@
     <div class="alert alert-primary" role="alert">
         {{ responseMessage }}
     </div>
-    <form action="/users/information" method="post" >
+    <form action="/users/update" method="post" >
         <label for="">Username:</label>
-        <input type="text" name="username" value="{{ user.username }}"><br>
+        <input type="text" name="username" value="{{ user.username }}" disabled><br>
         <label for="">Name:</label>
         <input type="text" name="name" value="{{ user.name }}"><br>
         <label for="">Lastname:</label>

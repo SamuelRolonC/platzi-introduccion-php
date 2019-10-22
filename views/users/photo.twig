@@ -5,8 +5,12 @@
     <div class="alert alert-primary" role="alert">
         {{ responseMessage }}
     </div>
+    <div class="col-3">
+      <img id="profile-picture" src="{{ user.getImage(user.name) }}" height="255" width="255">
+    </div>
+    <br>
     <form action="/photo" method="post" enctype="multipart/form-data">
-        <input type="file" name="photo"><br>
+        <input type="file" name="photo"><br><br>
         <button type="submit">Save</button>
     </form>
 {% endblock %}

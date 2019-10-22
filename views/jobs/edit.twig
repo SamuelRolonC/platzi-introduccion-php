@@ -1,0 +1,31 @@
+{% extends "main.twig" %}
+
+{% block content %}
+    <h1>Job</h1>
+    <div class="alert alert-primary" role="alert">
+      {{ responseMessage }}
+    </div>
+    <form action="/jobs/update" method="post" enctype="multipart/form-data" >
+        <label for="">Title:</label>
+        <input type="text" name="title" value="{{ job.title }}"><br>
+        <label for="">Company:</label>
+        <input type="text" name="company" value="{{ job.company }}"><br>
+        <label for="">City:</label>
+        <input type="text" name="city" value="{{ job.city }}"><br>
+        <label for="">Started:</label>
+        <input type="date" name="started_at" value="{{ job.started_at }}"><br>
+        <label for="">Finished:</label>
+        <input type="date" name="finished_at" value="{{ job.finished_at }}"><br>
+        {% if working %}
+          <input type="checkbox" name="working" value="working" checked>Working now<br>
+        {% else %}
+          <input type="checkbox" name="working" value="working">Working now<br>
+        {% endif %}        
+        <label for="">Description:</label><br>  
+        <textarea type="text" rows="5" cols="100" name="description" >{{ job.description }}</textarea><br>
+        <img src="/{{ job.getImage(job.title) }}" height="255" width="255"/>
+        <br>
+        <input type="file" name="image"><br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

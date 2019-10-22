@@ -40,18 +40,17 @@ class CreateJobTable extends AbstractMigration
                 'signed' => false,
                 'identity' => true
             ])
-            ->addColumn('id_user','integer',[ 'signed' => false ])
             ->addColumn('title','string')
+            ->addColumn('company','string')
+            ->addColumn('city','string')
             ->addColumn('description','text')
-            ->addColumn('visible','boolean')
-            ->addColumn('months','integer')
+            ->addColumn('started_at','date')
+            ->addColumn('finished_at','date')
+            ->addColumn('working','boolean')
             ->addColumn('image','string')
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
-            ->addColumn('deleted_at','datetime',[
-                'null' => true,
-                'default' => null
-            ])
+            ->addColumn('id_user','integer',[ 'signed' => false ])
             ->addForeignKey('id_user','users','id_user',[
                 'delete' => 'NO_ACTION',
                 'update' => 'NO_ACTION'

@@ -18,60 +18,58 @@ class JobsController extends BaseController
         $this->jobService = $jobService;
     }
 
-    public function getAddJobAction(ServerRequest $request)
+    public function store(ServerRequest $request)
     {
-        $responseMessage = null;
+        $responseMessage = '';
 
         if ($request->getMethod() == 'POST') {
             $postData = $request->getParsedBody();
+            $postData = array_merge($postData,$request->getUploadedFiles());
 
-            $jobValidator = Validator::key('title',Validator::stringType()->notEmpty())
-                ->key('description',Validator::stringType()->notEmpty());
-
-            try {
-                $jobValidator->assert($postData);
-
-                $job = new Job;
-                $job->title = $postData['title'];
-                $job->description = $postData['description'];
-                $job->visible = 1;
-                $job->months = 0;
-                $job->id_user = $_SESSION['userId'];
-
-                $file = $request->getUploadedFiles();
-                $logo = $file['logo'];
-
-                if ($logo->getError() == UPLOAD_ERR_OK) {
-                    $logo->moveTo($job->image);
-                }
-
-                $job->save();
-
-                $responseMessage = 'Saved';
-            } catch (\Exception $e) {
-                $responseMessage = $e->getMessage();
-            }
+            $responseMessage = $this->jobService->storeAndUpdate($postData);
         }
 
-        return $this->renderHTML('addJob.twig', [
-            'responseMessage' => $responseMessage
-        ]);
+        return $this->renderHTML('jobs/store.twig', [ 'responseMessage' => $responseMessage ]);
     }
 
-    public function indexAction(ServerRequest $request) {
+    public function index(ServerRequest $request)
+    {
         if ($request->getMethod() == 'GET') {
-            $jobs = Job::where('id_user',$_SESSION['userId'])
-                ->whereNull('deleted_at')
-                ->get();
+            $jobs = Job::where('id_user',$_SESSION['userId'])->get();
         }
 
         return $this->renderHTML('jobs/index.twig', compact('jobs'));
     }
 
-    public function deleteAction(ServerRequest $request) {
+    public function delete(ServerRequest $request)
+    {
         $params = $request->getQueryParams();
         $this->jobService->delete($params['id']);
 
         return new RedirectResponse('/jobs');
+    }
+
+    public function edit(ServerRequest $request)
+    {
+        if ($request->getMethod() == 'GET') {
+            $params = $request->getQueryParams();
+            $job = Job::find($params['id']);
+        }
+
+        return $this->renderHTML('jobs/edit.twig', compact('job'));
+    }
+
+    public function update(ServerRequest $request)
+    {
+        $responseMessage = '';
+
+        if ($request->getMethod() == 'POST') {
+            $postData = $request->getParsedBody();
+            $postData = array_merge($postData,$request->getUploadedFiles());
+
+            $responseMessage = $this->jobService->storeAndUpdate($postData,true);
+        }
+
+        return $this->renderHTML('jobs/edit.twig', [ 'responseMessage' => $responseMessage ]);
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
 use Phinx\Migration\AbstractMigration;
+use Phinx\Db\Adapter\MysqlAdapter;
 
-class CreateInformationTable extends AbstractMigration
+class CreateSkillTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -31,21 +32,21 @@ class CreateInformationTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('information',[
+        $table = $this->table('skills',[
             'id' => false,
-            'primary_key' => 'id_information'
+            'primary_key' => 'id_skill'
         ]);
-        $table
-            ->addColumn('id_information','integer',[
+
+        $table->addColumn('id_skill','integer',[
                 'signed' => false,
                 'identity' => true
             ])
-            ->addColumn('label','string')
-            ->addColumn('value','text')
-            ->addColumn('link','boolean')
+            ->addColumn('title','string')
+            ->addColumn('description','text')
+            ->addColumn('level','integer', [ 'limit' => MysqlAdapter::INT_TINY])
             ->addColumn('created_at','datetime')
             ->addColumn('updated_at','datetime')
-            ->addColumn('id_user','integer',[ 'signed' => false ])
+            ->addColumn('id_user','integer', [ 'signed' => false])
             ->addForeignKey('id_user','users','id_user',[
                 'delete' => 'NO_ACTION',
                 'update' => 'NO_ACTION'

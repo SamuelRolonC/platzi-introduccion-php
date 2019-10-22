@@ -1,0 +1,31 @@
+{% extends "main.twig" %}
+
+{% block content %}
+  <h1>Fields</h1>
+  <div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+  </div>
+  <div class="table-responsive">  
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th><h4>Label</h4></th>
+          <th><h4>Data</h4></th>
+        </tr>
+
+        {%  for info in information %}
+          <tr> 
+            <td> {{ info.label }} </td>
+            {% if info.link == true %}
+              <td><a href="{{ info.value }}">{{ info.value }} </a></td>
+            {% else %}
+              <td> {{ info.value }} </td>
+            {% endif %}
+            <td> <a href='information/edit?id={{info.id_information }}'>Edit</a> </td>
+            <td> <a href='information/delete?id={{info.id_information }}'>Delete</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
