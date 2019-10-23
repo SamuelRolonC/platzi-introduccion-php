@@ -6,6 +6,7 @@ use App\Models\User;
 use Respect\Validation\Validator;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\ServerRequest;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 class AuthController extends BaseController
 {
@@ -16,16 +17,28 @@ class AuthController extends BaseController
     public function postLogin(ServerRequest $request) {
         $postData = $request->getParsedBody();
 
-        $user = User::where('username',$postData['username'])->first();
+        $validator = Validator::key('username',Validator::NotEmpty()->noneof(
+                    Validator::intVal(),
+                    Validator::floatVal()
+                )->alnum()->noWhitespace())
+            ->key('password',Validator::NotEmpty());
+
+        try {
+            $validator->assert($postData);
         
-        if ($user) {
-            if ($user->checkPassword($postData['password'])) {
-                $_SESSION['userId'] = $user->id_user;
-                return new RedirectResponse('/admin');
+            $user = User::where('username',$postData['username'])->first();
+            
+            if ($user) {
+                if ($user->checkPassword($postData['password'])) {
+                    $_SESSION['userId'] = $user->id_user;
+                    return new RedirectResponse('/admin');
+                } else {
+                    $responseMessage = 'Unauthorized';
+                }
             } else {
                 $responseMessage = 'Unauthorized';
             }
-        } else {
+        } catch (NestedValidationException $e) {
             $responseMessage = 'Unauthorized';
         }
 

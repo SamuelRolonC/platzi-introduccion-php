@@ -46,7 +46,7 @@ class ProjectService
             $status = 'Successful';
         } catch (NestedValidationException $e) {
             return implode(" - ",$e->findMessages([
-                'stringType' => '{{name}} must be alfanumeric',
+                'stringType' => '{{name}} must contain a-z characters and/or simbols',
                 'notEmpty' => "{{name}} can't be empty"            
             ]));
         }

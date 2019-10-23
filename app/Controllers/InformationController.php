@@ -6,6 +6,8 @@ use App\Models\Information;
 use App\Services\InformationService;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\ServerRequest;
+use Respect\Validation\Validator;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 class InformationController extends BaseController
 {
@@ -43,21 +45,38 @@ class InformationController extends BaseController
     {
         $params = $request->getQueryParams();
         
-        $information = Information::find($params['id']);
-        $information->delete();
+        $validator = Validator::key('id',Validator::intVal());
+
+        try{
+            $validator->assert($params);
+
+            $information = Information::find($params['id']);
+            
+            $information->delete();
+        } catch (NestedValidationException $e) {
+            $responseMessage = 'Not found';
+        }
 
         return new RedirectResponse('/information');
     }
 
     public function edit(ServerRequest $request)
     {
-        if ($request->getMethod() == 'GET') {
-            $params = $request->getQueryParams();
+        $params = $request->getQueryParams();
+        
+        $validator = Validator::key('id',Validator::intVal());
+
+        try{
+            $validator->assert($params);
 
             $information = Information::find($params['id']);
+            
+            $information->delete();
+        } catch (NestedValidationException $e) {
+            $responseMessage = 'Not found';
         }
 
-        return $this->renderHTML('/information/edit.twig',compact('information'));
+        return $this->renderHTML('/information/edit.twig',compact('responseMessage'));
     }
 
     public function update(ServerRequest $request)

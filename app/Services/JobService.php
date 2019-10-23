@@ -12,14 +12,34 @@ class JobService
     {
         $jobValidator = Validator::key('title',Validator::stringType()->notEmpty())
             ->key('company',Validator::stringType()->notEmpty())
-            ->key('city',Validator::stringType()->notEmpty())
-            ->key('description',Validator::stringType()->notEmpty())
-            ->key('started_at',Validator::date()->notEmpty())
-            ->key('finished_at',Validator::date()->notEmpty())
-            ->key('working',Validator::optional(Validator::stringType()->notEmpty()));
+            ->key('city',Validator::optional(Validator::stringType()))
+            ->key('description',Validator::optional(Validator::stringType()))
+            ->key('started_at',Validator::date())
+            ->key('finished_at',Validator::optional(Validator::date()));
 
-        try {
+        try {  
             $jobValidator->assert($jobData);
+
+            $finishedIsEmpty = empty($jobData['finished_at']);
+
+            if (!(!$finishedIsEmpty xor isset($jobData['working']))) {
+                return 'One field, Finished or Working now, must be set';
+            }
+
+            if ($finishedIsEmpty) {
+                $jobData['finished_at'] = null;
+            }
+
+            if ($jobData['image']->getSize() > 0) {
+                switch ($jobData['image']->getClientMediaType()) {
+                    case 'image/png':
+                    case 'image/jpeg':
+                    case 'image/gif':
+                        break;
+                    default:
+                        return  'Image must be a png, jpg or gif image file';
+                }
+            }
 
             if ($isUpdate) {
                 $job = Job::find($jobData['id']);
@@ -33,7 +53,7 @@ class JobService
             $job->description = $jobData['description'];
             $job->started_at = $jobData['started_at'];
             $job->finished_at = $jobData['finished_at'];
-            $job->working = isset($bodyParams['working']);;
+            $job->working = isset($bodyParams['working']);
             $job->id_user = $_SESSION['userId'];
             
             if (isset($jobData['image'])) {
@@ -47,10 +67,9 @@ class JobService
             $job->save();
         } catch (NestedValidationException $e) {
             return implode(" - ",$e->findMessages([
-                'stringType' => '{{name}} must be alfanumeric',
+                'stringType' => '{{name}} must contain a-z characters and/or simbols',
                 'notEmpty' => "{{name}} can't be empty",
-                'length' => '{{name}} must contain between 8 and 50 characters',
-                'date' => '{{name}} must be a valid date'             
+                'date' => '{{name}} must be a valid date'
             ]));
         }
 
@@ -60,6 +79,6 @@ class JobService
     public function delete($id)
     {
         $job = Job::findOrFail($id);
-        $job->delete();
+        return $job->delete();
     }
 }

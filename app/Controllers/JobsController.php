@@ -4,9 +4,10 @@ namespace App\Controllers;
 
 use App\Models\Job;
 use App\Services\JobService;
-use Respect\Validation\Validator;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\ServerRequest;
+use Respect\Validation\Validator;
+use Respect\Validation\Exceptions\NestedValidationException;
 
 class JobsController extends BaseController
 {
@@ -44,6 +45,11 @@ class JobsController extends BaseController
     public function delete(ServerRequest $request)
     {
         $params = $request->getQueryParams();
+
+        if (Validator::intVal()->validate($params['id'])) {
+            return new RedirectResponse('/jobs');
+        }
+
         $this->jobService->delete($params['id']);
 
         return new RedirectResponse('/jobs');
@@ -53,6 +59,11 @@ class JobsController extends BaseController
     {
         if ($request->getMethod() == 'GET') {
             $params = $request->getQueryParams();
+
+            if (Validator::intVal()->validate($params['id'])) {
+                return new RedirectResponse('/jobs');
+            }
+
             $job = Job::find($params['id']);
         }
 

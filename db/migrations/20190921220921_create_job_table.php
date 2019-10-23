@@ -45,7 +45,7 @@ class CreateJobTable extends AbstractMigration
             ->addColumn('city','string')
             ->addColumn('description','text')
             ->addColumn('started_at','date')
-            ->addColumn('finished_at','date')
+            ->addColumn('finished_at','date',[ 'null' => true ])
             ->addColumn('working','boolean')
             ->addColumn('image','string')
             ->addColumn('created_at','datetime')

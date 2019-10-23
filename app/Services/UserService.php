@@ -16,22 +16,22 @@ class UserService
             if ($isUpdate) {
                 $user = User::findOrFail($_SESSION['userId']);
 
-                $userValidator = Validator::key('name',Validator::notEmpty()->stringType()->length(2,20))
-                    ->key('lastname',Validator::notEmpty()->stringType()->length(2,20))
-                    ->key('email',Validator::notEmpty()->stringType()->email())
+                $userValidator = Validator::key('name',Validator::notEmpty()->alnum()->length(2,20))
+                    ->key('lastname',Validator::notEmpty()->alnum()->length(2,20))
+                    ->key('email',Validator::notEmpty()->email())
                     ->key('phone',Validator::optional(Validator::intVal()));
             } else {
                 $user = new User;
 
-                $userValidator = Validator::key('username',Validator::notEmpty()->stringType()->length(3,20))
+                $userValidator = Validator::key('username',Validator::notEmpty()->alnum()->noWhitespace()->length(3,20))
                     ->key('password',Validator::notEmpty()->stringType()->length(8,50))
-                    ->key('name',Validator::notEmpty()->stringType()->length(2,20))
-                    ->key('lastname',Validator::notEmpty()->stringType()->length(2,20))
-                    ->key('email',Validator::notEmpty()->stringType()->email())
+                    ->key('name',Validator::notEmpty()->alnum()->length(2,20))
+                    ->key('lastname',Validator::notEmpty()->alnum()->length(2,20))
+                    ->key('email',Validator::notEmpty()->email())
                     ->key('phone',Validator::optional(Validator::intVal()));
             }
             
-            $userValidator->assert($userData);   
+            $userValidator->assert($userData);
 
             if (!$isUpdate) {
                 $user->username = $userData['username'];
@@ -52,11 +52,12 @@ class UserService
             $user->save();
         } catch (NestedValidationException $e) {
             $responseMessage = $e->findMessages([
-                'stringType' => 'El campo {{name}} debe contener valores alfanuméricos',
-                'notEmpty' => 'El campo {{name}} no puede estar vació',
-                'length' => 'Los campos Nombre y Apellido deben contener entre 2 y 20 caracteres. El campo username debe contener entre 3 y 20  carácteres. El campo contraseña debe contener entre 8 y 50 carácteres',
-                'email' => 'Debes ingresar un email válido',
-                'intVal' => 'El campo teléfono debe ser entero'
+                'stringType' => '{{name}} must contain a-z characters and/or simbols',
+                'alnum' => '{{name}} must be alphanumeric',
+                'notEmpty' => "{{name}} can't be empty",
+                'length' => 'Name and last name must be 2-20 length, username must be 3-20 length and password must be 8-50 length',
+                'email' => 'Must enter a valid email',
+                'intVal' => '{{name}} must be integer'
             ]);
             return implode(" - ",$responseMessage);
         } catch (QueryException $e) {

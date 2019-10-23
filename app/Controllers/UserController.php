@@ -31,7 +31,7 @@ class UserController extends BaseController
             $responseMessage = $this->userService->storeAndUpdate($postData);
         }
 
-        return $this->renderHTML('addUser.twig', [ 'responseMessage' => $responseMessage ]);
+        return $this->renderHTML('users/store.twig', [ 'responseMessage' => $responseMessage ]);
     }
 
     public function getSummary(ServerRequest $request)

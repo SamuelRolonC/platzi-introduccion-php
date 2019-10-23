@@ -43,7 +43,7 @@ class ChangePasswordController extends BaseController
         } catch (NestedValidationException $e) {
             
             $responseMessage = implode(" - ",$e->findMessages([
-                'stringType' => '{{name}} must be alfanumeric',
+                'stringType' => '{{name}} must contain a-z characters and/or simbols',
                 'notEmpty' => "{{name}} can't be empty",
                 'length' => '{{name}} must contain between 8 and 50 characters',
             ]));

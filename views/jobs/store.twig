@@ -6,20 +6,20 @@
       {{ responseMessage }}
     </div>
     <form action="/jobs/add" method="post" enctype="multipart/form-data" >
-        <label for="">Title:</label>
-        <input type="text" name="title" ><br>
-        <label for="">Company:</label>
-        <input type="text" name="company"><br>
-        <label for="">City:</label>
-        <input type="text" name="city"><br>
-        <label for="">Started:</label>
-        <input type="date" name="started_at"><br>
-        <label for="">Finished:</label>
-        <input type="date" name="finished_at"><br>
-        <input type="checkbox" name="working" value="working">Working now<br>
-        <label for="">Description:</label><br>  
-        <textarea type="text" rows="5" cols="100" name="description" ></textarea><br>
-        <input type="file" name="image"><br>
-        <button type="submit">Save</button>
+      <label for="">Title:</label>
+      <input type="text" name="title" ><br>
+      <label for="">Company:</label>
+      <input type="text" name="company"><br>
+      <label for="">City:</label>
+      <input type="text" name="city"><br>
+      <label for="">Started:</label>
+      <input type="date" name="started_at"><br>
+      <label for="">Finished:</label>
+      <input type="date" name="finished_at"><br>
+      <input type="checkbox" name="working" value="working">Working now<br>
+      <label for="">Description:</label><br>  
+      <textarea type="text" rows="5" cols="100" name="description" ></textarea><br>
+      <input type="file" name="image"><br>
+      <button type="submit">Save</button>
     </form>
 {% endblock %}
